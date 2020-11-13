@@ -68,5 +68,23 @@ public class EnderecoDaoImpl implements Serializable{
             System.err.println("Erro ao alterar endereco " + e.getMessage());
         } 
     }
+
+    public void alterarEndereco(Endereco endereco, Connection conexao) {
+        String sql = " UPDATE endereco SET logradouro = ?, numero = ? , "
+                + "cep = ?, bairro =  ?, cidade = ?, estado = ? WHERE id = ?";
+        try {
+            preparando = conexao.prepareStatement(sql);
+            preparando.setString(1, endereco.getLogradouro());
+            preparando.setString(2, endereco.getNumero());
+            preparando.setString(3, endereco.getCep());
+            preparando.setString(4, endereco.getBairro());
+            preparando.setString(5, endereco.getCidade());
+            preparando.setString(6, endereco.getEstado());
+            preparando.setInt(7, endereco.getId());
+            preparando.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Erro ao alterar endereço: " + e.getMessage()); 
+        }
+    }
  
 }

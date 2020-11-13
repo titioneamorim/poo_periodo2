@@ -6,6 +6,7 @@
 package br.com.associacao.dao;
 
 import br.com.associacao.entidade.Cliente;
+import br.com.associacao.entidade.Endereco;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -60,13 +61,17 @@ public class ClienteDaoImpl implements Serializable {
             preparando.setDouble(4, cliente.getSalario());
             preparando.setInt(5, cliente.getId());
             preparando.executeUpdate();
+            EnderecoDaoImpl enderecoDaoImpl = new EnderecoDaoImpl();
+            enderecoDaoImpl.alterarEndereco(cliente.getEndereco(), conexao);
+            
+            
         } catch (SQLException e) {
             System.err.println("Erro ao alterar " + e.getMessage());
         } finally {
             FabricaConexao.fecharConexao(conexao, preparando);
         }
     }
-
+    
     public void excluir(Integer id) throws SQLException {
         try {
             conexao = FabricaConexao.abrirConexao();
@@ -83,7 +88,10 @@ public class ClienteDaoImpl implements Serializable {
 
     public Cliente pesquisarPorId(Integer id) throws SQLException {
         Cliente cliente = null;
-        String consulta = "SELECT * FROM cliente WHERE id = ?";
+        String consulta = "SELECT * FROM cliente c " +
+                            "inner join endereco e " +
+                            "on c.id = e.idCliente " +
+                            "where c.id = ?";
         try {
             conexao = FabricaConexao.abrirConexao();
             preparando = conexao.prepareStatement(consulta);
@@ -96,6 +104,16 @@ public class ClienteDaoImpl implements Serializable {
                 cliente.setEmail(resultSet.getString("email"));
                 cliente.setTelefone(resultSet.getString("telefone"));
                 cliente.setSalario(resultSet.getDouble("salario"));
+                // aqui ele cria o objeto e seta direto na variavel endereco do objeto cliente
+                cliente.setEndereco(new Endereco());
+                // aqui usamos o próprio 
+                cliente.getEndereco().setId(resultSet.getInt("e.id"));
+                cliente.getEndereco().setBairro(resultSet.getString("e.bairro"));
+                cliente.getEndereco().setCidade(resultSet.getString("e.cidade"));
+                cliente.getEndereco().setCep(resultSet.getString("e.cep"));
+                cliente.getEndereco().setEstado(resultSet.getString("e.estado"));
+                cliente.getEndereco().setLogradouro(resultSet.getString("e.logradouro"));
+                cliente.getEndereco().setNumero(resultSet.getString("e.numero"));
             }
         } catch (SQLException e) {
             System.out.println("Erro ao pesquisar por id " + e.getMessage());

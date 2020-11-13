@@ -9,6 +9,7 @@ import br.com.associacao.entidade.Cliente;
 import br.com.associacao.entidade.Endereco;
 import br.com.utilitario.UtilGerador;
 import java.util.List;
+import javax.swing.JOptionPane;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -23,10 +24,16 @@ public class ClienteDaoImplTest {
 
     public ClienteDaoImplTest() {
         clienteDaoImpl = new ClienteDaoImpl();
+        
+        
+         
     }
+    
+   
 
- @Test
+// @Test
     public void testSalvar() throws Exception {
+        
         System.out.println("salvar");
         cliente = new Cliente(
                 null,
@@ -45,18 +52,18 @@ public class ClienteDaoImplTest {
         );
         cliente.setEndereco(endereco);
         clienteDaoImpl.salvar(cliente);
-    }
+        }
+    
 
-//    @Test
+   @Test
     public void testAlterar() throws Exception {
-        System.out.println("alterar");
-        cliente = new Cliente(
-                1,
-                "cliente alterado",
-                UtilGerador.gerarEmail(),
-                UtilGerador.gerarTelefoneFixo(),
-                Double.parseDouble(UtilGerador.gerarNumero(3))
-        );
+        System.out.println("alterando ");
+        //cria o objeto cliente e recebe o valor do ID do cliente
+        cliente = clienteDaoImpl.pesquisarPorId(Integer.parseInt(JOptionPane.showInputDialog("Digite o id")));
+        // seta o nome do cliente na próxima linha e o logradouro do endereco na linha seguinte
+        cliente.setNome("Nome alterado" + UtilGerador.criarNumeroAleatorioEntre2Valores(1, 50));
+        cliente.getEndereco().setLogradouro("Log Alterado" + UtilGerador.criarNumeroAleatorioEntre2Valores(1, 100));
+        // chama o metodo alterar e passa o objeto para a dao
         clienteDaoImpl.alterar(cliente);
     }
 
@@ -66,15 +73,25 @@ public class ClienteDaoImplTest {
         clienteDaoImpl.excluir(1);
     }
 
-//    @Test
+// @Test
     public void testPesquisarId() throws Exception {
         System.out.println("pesquisar por id");
-        cliente = clienteDaoImpl.pesquisarPorId(2);
+        cliente = clienteDaoImpl.pesquisarPorId(Integer.parseInt(JOptionPane.showInputDialog("Digite o id")));
         System.out.println("id " + cliente.getId());
         System.out.println("Nome " + cliente.getNome());
         System.out.println("E-mail " + cliente.getEmail());
         System.out.println("Telefone " + cliente.getTelefone());
         System.out.println("Salário " + cliente.getSalario());
+        // Aqui traz as informações do endereço
+        System.out.println("IdEndereco " + cliente.getEndereco().getId());
+        System.out.println("Logradouro " + cliente.getEndereco().getLogradouro());
+        System.out.println("Numero " + cliente.getEndereco().getNumero());
+        System.out.println("CEP " + cliente.getEndereco().getCep());
+        System.out.println("Bairro " + cliente.getEndereco().getBairro());
+        System.out.println("Cidade " + cliente.getEndereco().getCidade());
+        System.out.println("Estado " + cliente.getEndereco().getEstado());
+        
+        
     }
 
 //    @Test
